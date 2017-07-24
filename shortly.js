@@ -76,9 +76,10 @@ app.post('/links',
 // Write your authentication routes here
 /************************************************************/
 app.get('/login', (req, res) => res.redirect('login'));
+app.post('/login', (req, res) => res.redirect('/index'));
 
 app.get('/signup', (req, res) => res.redirect('signup'));
-
+// app.post('/signup', (req, res) => );
 
 /************************************************************/
 // Handle the wildcard route last - if all other routes fail
