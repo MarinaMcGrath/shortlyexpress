@@ -1,17 +1,18 @@
-var express = require('express');
-var util = require('./lib/utility');
-var partials = require('express-partials');
-var bodyParser = require('body-parser');
+const express = require('express');
+const util = require('./lib/utility');
+const partials = require('express-partials');
+const bodyParser = require('body-parser');
+const session = require('express-session');
 
 
-var db = require('./app/config');
-var Users = require('./app/collections/users');
-var User = require('./app/models/user');
-var Links = require('./app/collections/links');
-var Link = require('./app/models/link');
-var Click = require('./app/models/click');
+const db = require('./app/config');
+const Users = require('./app/collections/users');
+const User = require('./app/models/user');
+const Links = require('./app/collections/links');
+const Link = require('./app/models/link');
+const Click = require('./app/models/click');
 
-var app = express();
+const app = express();
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
@@ -21,7 +22,14 @@ app.use(bodyParser.json());
 // Parse forms (signup/login)
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
-
+const sess = {
+  secret: 'Hey cat',
+  resave: false,
+  cookie: {
+    secure: true,
+  }
+};
+app.use(session(sess));
 
 app.get('/', 
   function(req, res) {
@@ -76,18 +84,23 @@ app.post('/links',
 // Write your authentication routes here
 /************************************************************/
 app.get('/login', (req, res) => res.render('login'));
+
 app.post('/login', (req, res) => {
+  const login = () => {
+    res.redirect('/login');
+  };
+  
   new User({username: req.body.username}).fetch().then(function(found) {
     if (found) {
       util.checkUser(req.body.password, found.attributes.password, (err, matching) => {
         if (matching) {
           res.redirect('/');
         } else {
-          res.redirect('login');
+          login();
         }
       });
     } else {
-      res.redirect('login');
+      login();
     }
   });
 });
@@ -102,11 +115,17 @@ app.post('/signup', (req, res) => {
         username: req.body.username,
         password: req.body.password
       }).then(stuff => { 
+        sess.username = req.body.username;
+        console.log(sess.username);
         res.redirect('/');
       });
     }
   }); 
 });
+
+// app.get('/logout', (req, res) => {
+// res.redirect('/login');
+// });
 
 /************************************************************/
 // Handle the wildcard route last - if all other routes fail
