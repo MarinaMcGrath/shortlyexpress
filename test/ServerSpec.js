@@ -76,7 +76,7 @@ describe('', function() {
 
     var requestWithSession = request.defaults({jar: true});
 
-    xbeforeEach(function(done) {
+    beforeEach(function(done) {
       // create a user that we can then log-in with
       new User({
         'username': 'Phillip',
@@ -166,8 +166,11 @@ describe('', function() {
     describe('With previously saved urls:', function() {
 
       var link;
+      // create a user that we can then log-in with
+  
 
       beforeEach(function(done) {
+        
         // save a link to the database
         link = new Link({
           url: 'http://roflzoo.com/',
@@ -210,6 +213,7 @@ describe('', function() {
       });
 
       it('Returns all of the links to display on the links page', function(done) {
+ 
         var options = {
           'method': 'GET',
           'uri': 'http://127.0.0.1:4568/links'

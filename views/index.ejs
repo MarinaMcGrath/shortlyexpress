@@ -1,8 +1,10 @@
+<button id="logout">logout</button>
 <% include partials/backbone_templates %>
 
 <script>
   $(function(){
     new Shortly();
+    $('#logout').click(() => $.get('http://localhost:4568/logout', () => window.location.href = 'http://localhost:4568/login'));
   });
 </script>
 

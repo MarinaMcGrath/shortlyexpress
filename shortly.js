@@ -33,19 +33,31 @@ app.use(session(sess));
 
 app.get('/', 
   function(req, res) {
-    res.render('index');
+    if (!sess.username) {
+      res.redirect('login');
+    } else {
+      res.render('index');
+    }  
   });
 
 app.get('/create', 
   function(req, res) {
-    res.render('index');
+    if (!sess.username) {
+      res.redirect('login');
+    } else {
+      res.render('index');
+    }  
   });
 
 app.get('/links', 
   function(req, res) {
-    Links.reset().fetch().then(function(links) {
-      res.status(200).send(links.models);
-    });
+    if (!sess.username) {
+      res.redirect('login');
+    } else {
+      Links.reset().fetch().then(function(links) {
+        res.status(200).send(links.models);
+      });
+    }  
   });
 
 app.post('/links', 
@@ -89,11 +101,11 @@ app.post('/login', (req, res) => {
   const login = () => {
     res.redirect('/login');
   };
-  
   new User({username: req.body.username}).fetch().then(function(found) {
     if (found) {
       util.checkUser(req.body.password, found.attributes.password, (err, matching) => {
         if (matching) {
+          sess.username = req.body.username;
           res.redirect('/');
         } else {
           login();
@@ -123,9 +135,11 @@ app.post('/signup', (req, res) => {
   }); 
 });
 
-// app.get('/logout', (req, res) => {
-// res.redirect('/login');
-// });
+
+app.get('/logout', (req, res) => {
+  delete sess.username;
+  res.redirect('/login');
+});
 
 /************************************************************/
 // Handle the wildcard route last - if all other routes fail
