@@ -75,13 +75,24 @@ app.post('/links',
 /************************************************************/
 // Write your authentication routes here
 /************************************************************/
-app.get('/login', (req, res) => res.redirect('login'));
+app.get('/login', (req, res) => res.render('login'));
 app.post('/login', (req, res) => {
-  console.log(req.body);
-  res.redirect('/');
+  new User({username: req.body.username}).fetch().then(function(found) {
+    if (found) {
+      util.checkUser(req.body.password, found.attributes.password, (err, matching) => {
+        if (matching) {
+          res.redirect('/');
+        } else {
+          res.redirect('login');
+        }
+      });
+    } else {
+      res.redirect('login');
+    }
+  });
 });
 
-app.get('/signup', (req, res) => res.redirect('signup'));
+app.get('/signup', (req, res) => res.render('signup'));
 app.post('/signup', (req, res) => {
   new User({username: req.body.username}).fetch().then(function(found) {
     if (found) {
