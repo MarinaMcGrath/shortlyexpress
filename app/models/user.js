@@ -8,9 +8,11 @@ const User = db.Model.extend({
   hasTimestamps: false,
   initialize: function() {
     this.on('creating', function (model, attrs, options) {
-      bcrypt.hash(model.get('password'), null, null, (err, hash) => {
-        model.set('password', hash);
-      });
+      return new Promise((res, rej) => {
+        bcrypt.hash(model.get('password'), null, null, (err, hash) => {
+          err ? rej(err) : res(model.set('password', hash));
+        });
+      });  
     });
   }
 });
