@@ -76,14 +76,31 @@ app.post('/links',
 // Write your authentication routes here
 /************************************************************/
 app.get('/login', (req, res) => res.redirect('login'));
-app.post('/login', (req, res) => res.redirect('index'));
+app.post('/login', (req, res) => {
+  console.log(req.body);
+  res.redirect('/');
+});
 
 app.get('/signup', (req, res) => res.redirect('signup'));
 app.post('/signup', (req, res) => {
-  db.knex('users').insert([
-    { username: req.body.username },
-    { password: req.body.password }
-  ]).then(next => res.redirect('/'));
+  new User({ username: req.body.username }).fetch().then(found => {
+    if (found) {
+      res.redirect('/login');
+    } else {
+      Users.create({ 
+        username: req.body.username,
+        password: req.body.password
+      }).then(stuff => { 
+        res.redirect('/');
+      });
+    }
+  });
+  // db.knex('users').select('*').where('id', '=', 42).then(req => console.log('!!!!!!!!!!!!!!!!!', req));
+  // console.log(req.body.username, req.body.password);
+  // db.knex.insert({ 
+  //   username: req.body.username, 
+  //   password: req.body.password 
+  // }).into('users').then(next => res.redirect('/'));
 });
 
 /************************************************************/
