@@ -9,21 +9,10 @@ const User = db.Model.extend({
   initialize: function() {
     this.on('creating', function (model, attrs, options) {
       bcrypt.hash(model.get('password'), null, null, (err, hash) => {
-        model.set('hash', hash);
+        model.set('password', hash);
       });
-      db.knex.insert({ 
-        username: model.get('username'),
-        password: model.get('hash') 
-      }).into('users');
     });
   }
 });
 
 module.exports = User;
-
-/*
-bcrypt.hash(model.get('password'), null, null, (err, hash) => {
-  console.log(hash);
-  model.set('Ha$h', hash);
-});
-*/

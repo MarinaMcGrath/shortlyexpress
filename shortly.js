@@ -83,9 +83,9 @@ app.post('/login', (req, res) => {
 
 app.get('/signup', (req, res) => res.redirect('signup'));
 app.post('/signup', (req, res) => {
-  new User({ username: req.body.username }).fetch().then(found => {
+  new User({username: req.body.username}).fetch().then(function(found) {
     if (found) {
-      res.redirect('/login');
+      res.redirect('login');
     } else {
       Users.create({ 
         username: req.body.username,
@@ -95,12 +95,6 @@ app.post('/signup', (req, res) => {
       });
     }
   });
-  // db.knex('users').select('*').where('id', '=', 42).then(req => console.log('!!!!!!!!!!!!!!!!!', req));
-  // console.log(req.body.username, req.body.password);
-  // db.knex.insert({ 
-  //   username: req.body.username, 
-  //   password: req.body.password 
-  // }).into('users').then(next => res.redirect('/'));
 });
 
 /************************************************************/
